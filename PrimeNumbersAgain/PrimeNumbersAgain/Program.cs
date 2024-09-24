@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 
 namespace PrimeNumbersAgain
@@ -16,8 +16,8 @@ namespace PrimeNumbersAgain
             timer.Start();
             prime = FindNthPrime(n);
             timer.Stop();
-            
-            
+
+
             Console.WriteLine($"\nToo easy.. {prime} is the nth prime when n is {n}. I found that answer in {timer.Elapsed.Seconds} seconds.");
 
             EvaluatePassingTime(timer.Elapsed.Seconds);
@@ -25,44 +25,39 @@ namespace PrimeNumbersAgain
 
         static int FindNthPrime(int n)
         {
-            if (n == 1) return 2; // The first prime is 2
+            // Use an approximate limit based on the Prime Number Theorem
+            // nth prime is approximately n * log(n)
+            int limit = (int)(n * Math.Log(n) * 1.2); // 1.2 to ensure we cover all cases
+            bool[] isPrime = new bool[limit + 1];
 
-            int count = 1; // We already found the first prime (2)
-            int candidate = 3; // Start checking from 3
+            // Initialize the array
+            for (int i = 2; i <= limit; i++)
+                isPrime[i] = true;
 
-            while (count < n)
+            // Sieve of Eratosthenes
+            for (int p = 2; p * p <= limit; p++)
             {
-                if (IsPrime(candidate))
+                if (isPrime[p])
+                {
+                    for (int multiple = p * p; multiple <= limit; multiple += p)
+                        isPrime[multiple] = false;
+                }
+            }
+
+            // Collecting the primes
+            int count = 0;
+            for (int i = 2; i <= limit; i++)
+            {
+                if (isPrime[i])
                 {
                     count++;
-                }
-
-                if (count < n)
-                {
-                    candidate += 2; // Check only odd numbers after 2
+                    if (count == n)
+                        return i; // Return the nth prime
                 }
             }
 
-            return candidate;
+            return -1; // If no prime is found (shouldn't happen)
         }
-
-        static bool IsPrime(int num)
-        {
-            if (num < 2) return false;
-            if (num == 2) return true;
-            if (num % 2 == 0) return false;
-
-            int limit = (int)Math.Sqrt(num); // Only check up to the square root of num
-            for (int i = 3; i <= limit; i += 2)
-            {
-                if (num % i == 0)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
 
         static int GetNumber()
         {
@@ -70,7 +65,7 @@ namespace PrimeNumbersAgain
             while (true)
             {
                 Console.Write("Which nth prime should I find?: ");
-                
+
                 string num = Console.ReadLine();
                 if (Int32.TryParse(num, out n))
                 {
