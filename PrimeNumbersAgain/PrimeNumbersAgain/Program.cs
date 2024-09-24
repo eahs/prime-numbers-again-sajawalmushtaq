@@ -25,8 +25,44 @@ namespace PrimeNumbersAgain
 
         static int FindNthPrime(int n)
         {
-            return 0;
+            if (n == 1) return 2; // The first prime is 2
+
+            int count = 1; // We already found the first prime (2)
+            int candidate = 3; // Start checking from 3
+
+            while (count < n)
+            {
+                if (IsPrime(candidate))
+                {
+                    count++;
+                }
+
+                if (count < n)
+                {
+                    candidate += 2; // Check only odd numbers after 2
+                }
+            }
+
+            return candidate;
         }
+
+        static bool IsPrime(int num)
+        {
+            if (num < 2) return false;
+            if (num == 2) return true;
+            if (num % 2 == 0) return false;
+
+            int limit = (int)Math.Sqrt(num); // Only check up to the square root of num
+            for (int i = 3; i <= limit; i += 2)
+            {
+                if (num % i == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
         static int GetNumber()
         {
@@ -54,7 +90,7 @@ namespace PrimeNumbersAgain
             Console.WriteLine(".##......##..##....##....##...##..##..........##.");
             Console.WriteLine(".##......##..##..######..##...##..######...####..");
             Console.WriteLine(".................................................\n\n");
-            Console.WriteLine("Nth Prime Solver O-Matic Online..\nGuaranteed to find primes up to 2 million in under 30 seconds!\n\n");
+            Console.WriteLine("Nth Prime Solver O-Matic Online..\nGuaranteed to find primes up to 2 million in under 3 seconds!\n\n");
             
         }
 
@@ -63,7 +99,7 @@ namespace PrimeNumbersAgain
             Console.WriteLine("\n");
             Console.Write("Time Check: ");
 
-            if (time <= 10)
+            if (time <= 3)
             {
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Pass");
